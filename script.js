@@ -4,12 +4,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const generateButton = document.getElementById('generate-puzzle');
     const resetButton = document.getElementById('reset-puzzle');
     const solveButton = document.getElementById('solve-puzzle');
+    const pauseButton = document.getElementById('pause-timer');
+    const resumeButton = document.getElementById('resume-timer');
     const difficultySelector = document.getElementById('difficulty');
     const timerDisplay = document.getElementById('timer');
 
     let initialPuzzleState = '';
     let timerInterval;
     let currentPuzzle = '';
+    let timerPaused = false;
 
     // Predefined Sudoku puzzles and their solutions
     const puzzles = {
@@ -91,44 +94,54 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Function to load a puzzle into the grid
-    function loadPuzzle(puzzleString) {
+    function loadPuzzle(puzzle) {
         const cells = board.querySelectorAll('input');
-        initialPuzzleState = puzzleString; // Save initial state for reset
-        currentPuzzle = puzzleString;
         for (let i = 0; i < 81; i++) {
-            cells[i].value = puzzleString[i] !== '0' ? puzzleString[i] : '';
-            cells[i].disabled = puzzleString[i] !== '0'; // Disable cells with pre-filled values
+            cells[i].value = puzzle[i] === '0' ? '' : puzzle[i];
         }
+        initialPuzzleState = puzzle;
+        statusBar.textContent = "Puzzle loaded.";
     }
 
-    // Function to reset the puzzle to its initial state
+    // Function to reset the puzzle
     function resetPuzzle() {
-        if (initialPuzzleState) {
-            loadPuzzle(initialPuzzleState);
-            statusBar.textContent = "Puzzle reset to initial state.";
-        }
+        loadPuzzle(initialPuzzleState);
+        statusBar.textContent = "Puzzle reset.";
     }
 
     // Function to start the timer
     function startTimer() {
         let seconds = 0;
         let minutes = 0;
-
         timerInterval = setInterval(() => {
-            seconds++;
-            if (seconds >= 60) {
-                seconds = 0;
-                minutes++;
-            }
+            if (!timerPaused) {
+                seconds++;
+                if (seconds === 60) {
+                    seconds = 0;
+                    minutes++;
+                }
 
-            const formattedTime = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-            timerDisplay.textContent = `Time: ${formattedTime}`;
+                const formattedTime = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                timerDisplay.textContent = `Time: ${formattedTime}`;
+            }
         }, 1000);
     }
 
     // Function to stop the timer
     function stopTimer() {
         clearInterval(timerInterval);
+    }
+
+    // Function to pause the timer
+    function pauseTimer() {
+        timerPaused = true;
+        statusBar.textContent = "Timer paused.";
+    }
+
+    // Function to resume the timer
+    function resumeTimer() {
+        timerPaused = false;
+        statusBar.textContent = "Timer resumed.";
     }
 
     // Function to validate the current puzzle solution
@@ -171,6 +184,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     resetButton.addEventListener('click', resetPuzzle);
     solveButton.addEventListener('click', solvePuzzle);
+    pauseButton.addEventListener('click', pauseTimer);
+    resumeButton.addEventListener('click', resumeTimer);
     board.addEventListener('input', validatePuzzle);
 
     createGrid(); // Initialize the grid on page load
