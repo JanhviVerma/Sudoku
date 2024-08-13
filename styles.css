@@ -35,3 +35,54 @@ header {
 #category {
     margin-bottom: 20px;
 }
+
+/* Existing styles from V1 */
+#sudoku-board div {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    font-size: 18px;
+    cursor: pointer;
+    user-select: none;
+    position: relative; /* For border highlighting */
+}
+
+#sudoku-board div:hover {
+    background-color: #e0e0e0;
+}
+
+#sudoku-board div input {
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    font-size: 18px;
+    border: none;
+    outline: none;
+    background-color: transparent;
+    cursor: text;
+}
+
+#sudoku-board div input:focus {
+    background-color: #f8f8f8;
+}
+
+/* New Styles */
+#sudoku-board div.invalid input {
+    background-color: #ffdddd;
+    border: 1px solid red;
+}
+
+#sudoku-board div.selected {
+    border: 2px solid #007bff;
+}
+
+#status-bar {
+    margin-top: 20px;
+    font-size: 16px;
+    color: #333;
+}
+
