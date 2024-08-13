@@ -7,6 +7,12 @@ body {
     height: 100vh;
     margin: 0;
     background-color: #f0f0f0;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+body.dark {
+    background-color: #333;
+    color: #f0f0f0;
 }
 
 header {
@@ -20,7 +26,7 @@ header {
     align-items: center;
 }
 
-#difficulty {
+#theme-switcher, #difficulty {
     margin-bottom: 10px;
 }
 
@@ -58,6 +64,11 @@ header {
     border: 2px solid #333;
     border-radius: 8px;
     background-color: #fff;
+    transition: background-color 0.3s;
+}
+
+body.dark #sudoku-board {
+    background-color: #444;
 }
 
 #sudoku-board div {
@@ -74,8 +85,16 @@ header {
     position: relative;
 }
 
+body.dark #sudoku-board div {
+    border: 1px solid #666;
+}
+
 #sudoku-board div:hover {
     background-color: #e0e0e0;
+}
+
+body.dark #sudoku-board div:hover {
+    background-color: #555;
 }
 
 #sudoku-board div input {
@@ -93,8 +112,17 @@ header {
     background-color: #f8f8f8;
 }
 
+body.dark #sudoku-board div input:focus {
+    background-color: #666;
+}
+
 #sudoku-board div.invalid input {
     background-color: #ffdddd;
+    border: 1px solid red;
+}
+
+body.dark #sudoku-board div.invalid input {
+    background-color: #773c3c;
     border: 1px solid red;
 }
 
@@ -102,15 +130,38 @@ header {
     border: 2px solid #007bff;
 }
 
+body.dark #sudoku-board div.selected {
+    border: 2px solid #66aaff;
+}
+
 #sudoku-board div.valid {
     background-color: #d4edda;
     border: 1px solid #c3e6cb;
+}
+
+body.dark #sudoku-board div.valid {
+    background-color: #5a9e3c;
+    border: 1px solid #4a8e31;
+}
+
+#sudoku-board div.solved {
+    background-color: #e0f7fa;
+    border: 1px solid #00acc1;
+}
+
+body.dark #sudoku-board div.solved {
+    background-color: #00796b;
+    border: 1px solid #004d40;
 }
 
 #status-bar {
     margin-top: 20px;
     font-size: 16px;
     color: #333;
+}
+
+body.dark #status-bar {
+    color: #f0f0f0;
 }
 
 #statistics {
@@ -142,4 +193,16 @@ header {
 
 #custom-puzzle button:hover {
     background-color: #218838;
+}
+
+@media (max-width: 600px) {
+    #sudoku-board {
+        grid-template-columns: repeat(9, 40px);
+        grid-template-rows: repeat(9, 40px);
+    }
+
+    #buttons button {
+        padding: 8px 16px;
+        font-size: 14px;
+    }
 }

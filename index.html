@@ -10,6 +10,13 @@
     <header>
         <h1>Sudoku Game</h1>
         <div id="controls">
+            <div id="theme-switcher">
+                <label for="theme">Select Theme:</label>
+                <select id="theme">
+                    <option value="light">Light</option>
+                    <option value="dark">Dark</option>
+                </select>
+            </div>
             <div id="difficulty">
                 <label for="difficulty">Select Difficulty:</label>
                 <select id="difficulty">
@@ -29,6 +36,7 @@
                 <button id="save-game">Save Game</button>
                 <button id="load-game">Load Game</button>
                 <button id="hint-button">Get Hint</button>
+                <button id="save-progress">Save Progress</button>
             </div>
         </div>
         <div id="timer">Time: 00:00</div>
@@ -44,6 +52,8 @@
         <p>Moves: <span id="move-count">0</span></p>
         <p>Hints Used: <span id="hint-count">0</span></p>
         <p>Time Spent: <span id="time-spent">00:00</span></p>
+        <p>Average Time: <span id="avg-time">00:00</span></p>
+        <p>Average Moves: <span id="avg-moves">0</span></p>
     </div>
     <div id="custom-puzzle">
         <h2>Enter Your Puzzle</h2>
