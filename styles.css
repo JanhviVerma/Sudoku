@@ -27,12 +27,11 @@ header {
 #buttons {
     margin-bottom: 10px;
     display: flex;
-    flex-direction: column;
+    flex-wrap: wrap;
     gap: 10px;
 }
 
-#generate-puzzle, #reset-puzzle, #solve-puzzle, #pause-timer, #resume-timer {
-    margin: 5px;
+#buttons button {
     padding: 10px 20px;
     font-size: 16px;
     cursor: pointer;
@@ -42,7 +41,7 @@ header {
     border-radius: 4px;
 }
 
-#generate-puzzle:hover, #reset-puzzle:hover, #solve-puzzle:hover, #pause-timer:hover, #resume-timer:hover {
+#buttons button:hover {
     background-color: #0056b3;
 }
 
@@ -101,6 +100,11 @@ header {
 
 #sudoku-board div.selected {
     border: 2px solid #007bff;
+}
+
+#sudoku-board div.valid {
+    background-color: #d4edda;
+    border: 1px solid #c3e6cb;
 }
 
 #status-bar {

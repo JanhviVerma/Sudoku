@@ -6,6 +6,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const solveButton = document.getElementById('solve-puzzle');
     const pauseButton = document.getElementById('pause-timer');
     const resumeButton = document.getElementById('resume-timer');
+    const undoButton = document.getElementById('undo-move');
+    const redoButton = document.getElementById('redo-move');
+    const saveButton = document.getElementById('save-game');
+    const loadButton = document.getElementById('load-game');
     const difficultySelector = document.getElementById('difficulty');
     const timerDisplay = document.getElementById('timer');
 
@@ -13,6 +17,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let timerInterval;
     let currentPuzzle = '';
     let timerPaused = false;
+    let undoStack = [];
+    let redoStack = [];
 
     // Predefined Sudoku puzzles and their solutions
     const puzzles = {
@@ -58,7 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
             input.maxLength = 1;
 
             // Add event listeners
-            input.addEventListener('input', validateInput);
+            input.addEventListener('input', handleInput);
             input.addEventListener('focus', () => selectCell(cell));
             input.addEventListener('blur', () => deselectCell(cell));
 
@@ -67,30 +73,40 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Function to validate input (only numbers 1-9)
-    function validateInput(event) {
+    // Function to handle input changes
+    function handleInput(event) {
         const value = event.target.value;
         const cell = event.target.parentElement;
         if (!/^[1-9]$/.test(value)) {
             event.target.value = '';
             cell.classList.add('invalid');
-            statusBar.textContent = "Invalid input! Please enter a number between 1 and 9.";
+            statusBar.textContent = "Invalid input. Please enter a number between 1 and 9.";
         } else {
             cell.classList.remove('invalid');
-            statusBar.textContent = '';
+            cell.classList.add('valid');
         }
+        undoStack.push(getCurrentState());
+        redoStack = [];
     }
 
-    // Function to highlight the selected cell
+    // Function to select a cell
     function selectCell(cell) {
         cell.classList.add('selected');
-        statusBar.textContent = "Cell selected.";
     }
 
-    // Function to remove the highlight from the selected cell
+    // Function to deselect a cell
     function deselectCell(cell) {
         cell.classList.remove('selected');
-        statusBar.textContent = '';
+    }
+
+    // Function to get the current state of the puzzle
+    function getCurrentState() {
+        const cells = board.querySelectorAll('input');
+        let state = '';
+        cells.forEach(cell => {
+            state += cell.value || '0';
+        });
+        return state;
     }
 
     // Function to load a puzzle into the grid
@@ -100,6 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
             cells[i].value = puzzle[i] === '0' ? '' : puzzle[i];
         }
         initialPuzzleState = puzzle;
+        currentPuzzle = puzzle;
         statusBar.textContent = "Puzzle loaded.";
     }
 
@@ -172,6 +189,44 @@ document.addEventListener('DOMContentLoaded', () => {
         statusBar.textContent = "Puzzle solved.";
     }
 
+    // Function to undo the last move
+    function undoMove() {
+        if (undoStack.length > 0) {
+            redoStack.push(getCurrentState());
+            loadPuzzle(undoStack.pop());
+        }
+    }
+
+    // Function to redo the last undone move
+    function redoMove() {
+        if (redoStack.length > 0) {
+            loadPuzzle(redoStack.pop());
+        }
+    }
+
+    // Function to save the current game state to localStorage
+    function saveGame() {
+        localStorage.setItem('sudokuGame', JSON.stringify({
+            puzzle: getCurrentState(),
+            timer: timerDisplay.textContent,
+            initialPuzzleState
+        }));
+        statusBar.textContent = "Game saved.";
+    }
+
+    // Function to load the game state from localStorage
+    function loadGame() {
+        const savedGame = JSON.parse(localStorage.getItem('sudokuGame'));
+        if (savedGame) {
+            loadPuzzle(savedGame.puzzle);
+            timerDisplay.textContent = savedGame.timer;
+            initialPuzzleState = savedGame.initialPuzzleState;
+            statusBar.textContent = "Game loaded.";
+        } else {
+            statusBar.textContent = "No saved game found.";
+        }
+    }
+
     // Event listeners
     generateButton.addEventListener('click', () => {
         const selectedDifficulty = difficultySelector.value;
@@ -186,6 +241,10 @@ document.addEventListener('DOMContentLoaded', () => {
     solveButton.addEventListener('click', solvePuzzle);
     pauseButton.addEventListener('click', pauseTimer);
     resumeButton.addEventListener('click', resumeTimer);
+    undoButton.addEventListener('click', undoMove);
+    redoButton.addEventListener('click', redoMove);
+    saveButton.addEventListener('click', saveGame);
+    loadButton.addEventListener('click', loadGame);
     board.addEventListener('input', validatePuzzle);
 
     createGrid(); // Initialize the grid on page load
