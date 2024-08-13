@@ -65,6 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
         board.innerHTML = '';
         for (let i = 0; i < 81; i++) {
             const cell = document.createElement('div');
+            cell.classList.add('sudoku-cell', 'fade-in');
             const input = document.createElement('input');
             input.type = 'text';
             input.maxLength = 1;
@@ -72,23 +73,46 @@ document.addEventListener('DOMContentLoaded', () => {
             board.appendChild(cell);
 
             cell.addEventListener('click', () => selectCell(cell));
-            input.addEventListener('input', () => validateCell(input, cell));
+            input.addEventListener('input', (e) => validateCell(input, cell, e));
+            
+            // Add animation delay
+            cell.style.animationDelay = `${i * 10}ms`;
         }
     }
 
-    function validateCell(input, cell) {
+    function validateCell(input, cell, event) {
         const value = input.value;
         if (value === '' || /^[1-9]$/.test(value)) {
             cell.classList.remove('invalid');
-            cell.classList.add('valid');
+            cell.classList.add('valid', 'slide-in');
         } else {
-            cell.classList.add('invalid');
+            cell.classList.add('invalid', 'shake');
+            cell.classList.remove('valid');
             statusBar.textContent = "Invalid input. Please enter a number between 1 and 9.";
+            event.preventDefault();
         }
         undoStack.push(getCurrentState());
         redoStack = [];
         moveCount++;
         moveCountDisplay.textContent = moveCount;
+        
+        // Remove animation classes after they complete
+        setTimeout(() => {
+            cell.classList.remove('slide-in', 'shake');
+        }, 300);
+    }
+
+    function selectCell(cell) {
+        const previouslySelected = board.querySelector('.selected');
+        if (previouslySelected) {
+            deselectCell(previouslySelected);
+        }
+        cell.classList.add('selected', 'pulse');
+        setTimeout(() => cell.classList.remove('pulse'), 300);
+    }
+
+    function switchTheme() {
+        document.body.className = themeSelector.value;
     }
 
     function provideHint() {
@@ -300,6 +324,12 @@ document.addEventListener('DOMContentLoaded', () => {
         statusBar.textContent = "Puzzle generated.";
     });
 
+    const buttons = document.querySelectorAll('button');
+    buttons.forEach(button => {
+        button.addEventListener('mouseover', () => button.classList.add('hover'));
+        button.addEventListener('mouseout', () => button.classList.remove('hover'));
+    });
+
     resetButton.addEventListener('click', resetPuzzle);
     solveButton.addEventListener('click', solvePuzzle);
     pauseButton.addEventListener('click', pauseTimer);
@@ -312,4 +342,8 @@ document.addEventListener('DOMContentLoaded', () => {
     saveProgressButton.addEventListener('click', saveProgress);
     loadCustomPuzzleButton.addEventListener('click', () => loadPuzzle(puzzleInput.value));
     themeSelector.addEventListener('change', switchTheme);
+
+    createGrid();
+    startTimer();
+    switchTheme();
 });
