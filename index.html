@@ -28,6 +28,7 @@
                 <button id="redo-move">Redo Move</button>
                 <button id="save-game">Save Game</button>
                 <button id="load-game">Load Game</button>
+                <button id="hint-button">Get Hint</button>
             </div>
         </div>
         <div id="timer">Time: 00:00</div>
@@ -38,6 +39,17 @@
         </div>
     </main>
     <div id="status-bar"></div>
+    <div id="statistics">
+        <h2>Statistics</h2>
+        <p>Moves: <span id="move-count">0</span></p>
+        <p>Hints Used: <span id="hint-count">0</span></p>
+        <p>Time Spent: <span id="time-spent">00:00</span></p>
+    </div>
+    <div id="custom-puzzle">
+        <h2>Enter Your Puzzle</h2>
+        <textarea id="puzzle-input" rows="10" cols="30"></textarea>
+        <button id="load-custom-puzzle">Load Custom Puzzle</button>
+    </div>
     <script src="script.js"></script>
 </body>
 </html>

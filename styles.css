@@ -112,3 +112,34 @@ header {
     font-size: 16px;
     color: #333;
 }
+
+#statistics {
+    margin-top: 20px;
+    font-size: 16px;
+    text-align: center;
+}
+
+#custom-puzzle {
+    margin-top: 20px;
+    text-align: center;
+}
+
+#custom-puzzle textarea {
+    font-size: 16px;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+#custom-puzzle button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 4px;
+}
+
+#custom-puzzle button:hover {
+    background-color: #218838;
+}

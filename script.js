@@ -10,8 +10,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const redoButton = document.getElementById('redo-move');
     const saveButton = document.getElementById('save-game');
     const loadButton = document.getElementById('load-game');
+    const hintButton = document.getElementById('hint-button');
+    const loadCustomPuzzleButton = document.getElementById('load-custom-puzzle');
     const difficultySelector = document.getElementById('difficulty');
     const timerDisplay = document.getElementById('timer');
+    const moveCountDisplay = document.getElementById('move-count');
+    const hintCountDisplay = document.getElementById('hint-count');
+    const timeSpentDisplay = document.getElementById('time-spent');
+    const puzzleInput = document.getElementById('puzzle-input');
 
     let initialPuzzleState = '';
     let timerInterval;
@@ -19,6 +25,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let timerPaused = false;
     let undoStack = [];
     let redoStack = [];
+    let moveCount = 0;
+    let hintCount = 0;
 
     // Predefined Sudoku puzzles and their solutions
     const puzzles = {
@@ -39,58 +47,81 @@ document.addEventListener('DOMContentLoaded', () => {
             },
             {
                 puzzle: '030000050004005006008000000007903820000000000000781004200000000800300040010000080',
-                solution: '731689452294135876658472193147953628823614759965781324572846931886327514319524687'
+                solution: '137689254624735916598421763947613825265492371381279644279853161848392573953761428'
             }
         ],
         hard: [
             {
-                puzzle: '000000907000420180000705026100904000050000040000507009920108000034059000507000000',
-                solution: '843621957765423189291785326172934865659871243384567219926148573438259671517396482'
+                puzzle: '002006000400000003000840000009020007000300000300070400500000200000100600004200000',
+                solution: '572936418491758263683241579819423657724369851356174492518692734297146385163927'
             },
             {
-                puzzle: '800000000003600000070090200050007000000045700000100030001000068008500010090000400',
-                solution: '812354697543682971679791253954237186326845719187169532431976825768523149295418364'
+                puzzle: '006000200000000000020040003000000080400600700800000000900070000000000800007000500',
+                solution: '956734281473621598821459763291387645438962715786145932914278356742619287396154'
             }
         ]
     };
 
     // Function to create the Sudoku grid
     function createGrid() {
-        board.innerHTML = ''; // Clear the board
+        board.innerHTML = '';
         for (let i = 0; i < 81; i++) {
             const cell = document.createElement('div');
             const input = document.createElement('input');
             input.type = 'text';
             input.maxLength = 1;
-
-            // Add event listeners
-            input.addEventListener('input', handleInput);
-            input.addEventListener('focus', () => selectCell(cell));
-            input.addEventListener('blur', () => deselectCell(cell));
-
             cell.appendChild(input);
             board.appendChild(cell);
+
+            cell.addEventListener('click', () => selectCell(cell));
+            input.addEventListener('input', () => validateCell(input, cell));
         }
     }
 
-    // Function to handle input changes
-    function handleInput(event) {
-        const value = event.target.value;
-        const cell = event.target.parentElement;
-        if (!/^[1-9]$/.test(value)) {
-            event.target.value = '';
-            cell.classList.add('invalid');
-            statusBar.textContent = "Invalid input. Please enter a number between 1 and 9.";
-        } else {
+    // Function to validate the input in a cell
+    function validateCell(input, cell) {
+        const value = input.value;
+        if (value === '' || /^[1-9]$/.test(value)) {
             cell.classList.remove('invalid');
             cell.classList.add('valid');
+        } else {
+            cell.classList.add('invalid');
+            statusBar.textContent = "Invalid input. Please enter a number between 1 and 9.";
         }
         undoStack.push(getCurrentState());
         redoStack = [];
+        moveCount++;
+        moveCountDisplay.textContent = moveCount;
+    }
+
+    // Function to provide a hint
+    function provideHint() {
+        const cells = board.querySelectorAll('input');
+        let hintGiven = false;
+
+        for (let i = 0; i < 81; i++) {
+            const cell = cells[i];
+            if (!cell.value && initialPuzzleState[i] !== '0') {
+                cell.value = initialPuzzleState[i];
+                cell.classList.add('valid');
+                hintCount++;
+                hintCountDisplay.textContent = hintCount;
+                hintGiven = true;
+                break;
+            }
+        }
+
+        if (!hintGiven) {
+            statusBar.textContent = "No hints available.";
+        }
     }
 
     // Function to select a cell
     function selectCell(cell) {
+        const previouslySelected = board.querySelector('.selected');
+        if (previouslySelected) {
+            deselectCell(previouslySelected);
+        }
         cell.classList.add('selected');
     }
 
@@ -140,6 +171,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const formattedTime = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
                 timerDisplay.textContent = `Time: ${formattedTime}`;
+                timeSpentDisplay.textContent = formattedTime;
             }
         }, 1000);
     }
@@ -220,6 +252,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (savedGame) {
             loadPuzzle(savedGame.puzzle);
             timerDisplay.textContent = savedGame.timer;
+            timeSpentDisplay.textContent = savedGame.timer;
             initialPuzzleState = savedGame.initialPuzzleState;
             statusBar.textContent = "Game loaded.";
         } else {
@@ -245,6 +278,11 @@ document.addEventListener('DOMContentLoaded', () => {
     redoButton.addEventListener('click', redoMove);
     saveButton.addEventListener('click', saveGame);
     loadButton.addEventListener('click', loadGame);
+    hintButton.addEventListener('click', provideHint);
+    loadCustomPuzzleButton.addEventListener('click', () => {
+        loadPuzzle(puzzleInput.value);
+        statusBar.textContent = "Custom puzzle loaded.";
+    });
     board.addEventListener('input', validatePuzzle);
 
     createGrid(); // Initialize the grid on page load
