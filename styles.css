@@ -67,7 +67,7 @@ header {
     margin-bottom: 20px;
 }
 
-#generate-puzzle, #reset-puzzle {
+#generate-puzzle, #reset-puzzle, #solve-puzzle {
     margin-left: 10px;
     padding: 5px 10px;
     font-size: 16px;
@@ -78,7 +78,7 @@ header {
     border-radius: 4px;
 }
 
-#generate-puzzle:hover, #reset-puzzle:hover {
+#generate-puzzle:hover, #reset-puzzle:hover, #solve-puzzle:hover {
     background-color: #0056b3;
 }
 
