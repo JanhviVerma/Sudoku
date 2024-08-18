@@ -4,6 +4,8 @@
 
 The **Sudoku Game** is a web-based application that allows users to play the classic Sudoku puzzle game. This implementation provides an interactive and engaging way to enjoy Sudoku, with various levels of difficulty and an intuitive interface that is accessible on any device.
 
+**[Play the Game Live!](https://janhviverma.github.io/Sudoku/)**
+
 ## Features
 
 - **Interactive Gameplay:** Play Sudoku directly in your web browser with a clean and simple user interface.
